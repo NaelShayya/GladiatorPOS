@@ -5,6 +5,8 @@ import MainContent from './pages/products';
 import AuthForm from './pages/auth';
 import './App.css'; // Import your global CSS file
 import CartPage from './pages/cart';
+import AddProductForm from './components/prodForm';
+import OrdersTable from './pages/ordersTable';
 
 const App = () => {
   return (
@@ -16,6 +18,8 @@ const App = () => {
             <Route path="/" element={<MainContent />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/auth" element={<AuthForm />} />
+            <Route path="/addProd" element={<AddProductForm />} />
+            <Route path="/table" element={<OrdersTable />} />
           </Routes>
         </div>
       </div>

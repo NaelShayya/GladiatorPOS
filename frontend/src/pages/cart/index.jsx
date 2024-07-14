@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import TopNavBar from '../../components/topNav';
 import ProductCard from '../../components/productCard';
 import Sidebar from '../../components/sideBar';
 import AddProductForm from '../../components/prodForm';
 import Cart from '../../components/cartComp'; // Import the Cart component
+import CheckoutModal from '../../components/checkout'; // Import the CheckoutModal component
+
+const GlobalStyle = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+  }
+`;
 
 const MainContainer = styled.div`
   margin-left: 4rem; /* Adjust based on your sidebar width */
-  padding: 2rem; /* Adjusted padding for top and sides */
+  padding: 0.5rem; /* Adjusted padding for top and sides */
 `;
 
 const ProductGrid = styled.div`
@@ -47,6 +60,7 @@ const CartPage = () => {
   const [filteredProducts, setFilteredProducts] = useState(initialProducts);
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
@@ -84,28 +98,45 @@ const CartPage = () => {
   };
 
   const handleCheckOut = () => {
-    alert('Proceeding to checkout');
+    setIsCheckoutModalOpen(true);
+  };
+
+  const closeCheckoutModal = () => {
+    setIsCheckoutModalOpen(false);
+  };
+
+  const handlePaymentSuccess = () => {
     setCart([]);
+    setIsCheckoutModalOpen(false);
   };
 
   return (
-    <MainContainer>
-      <TopNavBar searchQuery={searchQuery} setSearchQuery={handleSearchChange} />
-      <ProductGrid>
-        {filteredProducts.map(product => (
-          <ProductCard key={product.id} product={product} showAddToCart={true} onAddToCart={handleAddToCart} />
-        ))}
-      </ProductGrid>
-      <CartButton onClick={toggleCart}>Cart</CartButton>
-      <Cart 
-        isOpen={isCartOpen} 
-        cartItems={cart} 
-        onClose={toggleCart} 
-        onQuantityChange={handleQuantityChange} 
-        onClearCart={handleClearCart} 
-        onCheckOut={handleCheckOut} 
-      />
-    </MainContainer>
+    <>
+      <GlobalStyle />
+      <MainContainer>
+        <TopNavBar searchQuery={searchQuery} setSearchQuery={handleSearchChange} />
+        <ProductGrid>
+          {filteredProducts.map(product => (
+            <ProductCard key={product.id} product={product} showAddToCart={true} onAddToCart={handleAddToCart} />
+          ))}
+        </ProductGrid>
+        <CartButton onClick={toggleCart}>Cart</CartButton>
+        <Cart 
+          isOpen={isCartOpen} 
+          cartItems={cart} 
+          onClose={toggleCart} 
+          onQuantityChange={handleQuantityChange} 
+          onClearCart={handleClearCart} 
+          onCheckOut={handleCheckOut} 
+        />
+        <CheckoutModal
+          isOpen={isCheckoutModalOpen}
+          cartItems={cart}
+          onClose={closeCheckoutModal}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
+      </MainContainer>
+    </>
   );
 };
 

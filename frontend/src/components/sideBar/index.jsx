@@ -239,7 +239,7 @@ const Sidebar = () => {
             onClick={() => setClick(false)}
             exact
             activeClassName="active"
-            to="/Home"
+            to="/cart"
           >
             <img src={Home} alt="Home" />
             <Text clicked={click}>Home</Text>
@@ -247,7 +247,7 @@ const Sidebar = () => {
           <Item
             onClick={() => setClick(false)}
             activeClassName="active"
-            to="/team"
+            to="/"
           >
             <img src={Team} alt="Team" />
             <Text clicked={click}>Team</Text>
@@ -255,7 +255,7 @@ const Sidebar = () => {
           <Item
             onClick={() => setClick(false)}
             activeClassName="active"
-            to="/calender"
+            to="/addProd"
           >
             <img src={Calender} alt="Calender" />
             <Text clicked={click}>Calender</Text>
@@ -263,7 +263,7 @@ const Sidebar = () => {
           <Item
             onClick={() => setClick(false)}
             activeClassName="active"
-            to="/documents"
+            to="/table"
           >
             <img src={Documents} alt="Documents" />
             <Text clicked={click}>Documents</Text>

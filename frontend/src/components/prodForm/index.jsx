@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const FormContainer = styled.div`
-  margin: 2rem 0;
+  max-width: 500px;
+  margin: 2rem auto;
   padding: 2rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--light-gray);
+  border: 2px solid black; /* Added black border */
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+  
+  &:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
 `;
 
-const FormField = styled.div`
+const FormGroup = styled.div`
   margin-bottom: 1.5rem;
 `;
 
@@ -18,80 +24,132 @@ const Label = styled.label`
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
-  color: #333;
+  color: var(--dark-gray);
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid var(--gray);
+  border-radius: 5px;
   font-size: 1rem;
-  color: #333;
-  transition: border-color 0.3s;
-
+  color: var(--dark-gray);
+  transition: border-color 0.3s ease-in-out;
+  
   &:focus {
-    border-color: #007bff;
+    border-color: black; /* Changed to black border color on focus */
     outline: none;
   }
 `;
 
 const Button = styled.button`
-  padding: 0.75rem 1.5rem;
-  background-color: #007bff;
-  color: #fff;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: black; /* Changed to black background */
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s;
-
+  transition: background-color 0.3s ease-in-out;
+  
   &:hover {
-    background-color: #0056b3;
+    background-color: var(--dark-gray); /* Changed to dark gray on hover */
   }
 `;
 
-const AddProductForm = ({ addProduct }) => {
-  const [productName, setProductName] = useState('');
-  const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [quantity, setQuantity] = useState('');
+const AddProductForm = ({ onProductAdded }) => {
+  const [product, setProduct] = useState({
+    name: '',
+    price: '',
+    cost: '',
+    stock: '',
+    category: '',
+  });
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newProduct = {
-      id: Date.now(), // or use any unique id generator
-      name: productName,
-      description,
-      image: imageUrl,
-      quantity: parseInt(quantity, 10),
-    };
-    addProduct(newProduct);
-    setProductName('');
-    setDescription('');
-    setImageUrl('');
-    setQuantity('');
+    try {
+      const response = await axios.post('/api/products', product);
+      onProductAdded(response.data);
+      setProduct({
+        name: '',
+        price: '',
+        cost: '',
+        stock: '',
+        category: '',
+      });
+    } catch (error) {
+      console.error('Error adding product:', error);
+    }
   };
 
   return (
     <FormContainer>
       <form onSubmit={handleSubmit}>
-        <FormField>
-          <Label>Product Name</Label>
-          <Input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} required />
-        </FormField>
-        <FormField>
-          <Label>Description</Label>
-          <Input type="text" value={description} onChange={(e) => setDescription(e.target.value)} required />
-        </FormField>
-        <FormField>
-          <Label>Image URL</Label>
-          <Input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required />
-        </FormField>
-        <FormField>
-          <Label>Quantity</Label>
-          <Input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
-        </FormField>
+        <FormGroup>
+          <Label htmlFor="name">Name</Label>
+          <Input
+            type="text"
+            id="name"
+            name="name"
+            value={product.name}
+            onChange={handleChange}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="price">Price</Label>
+          <Input
+            type="number"
+            id="price"
+            name="price"
+            value={product.price}
+            onChange={handleChange}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="cost">Cost</Label>
+          <Input
+            type="number"
+            id="cost"
+            name="cost"
+            value={product.cost}
+            onChange={handleChange}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="stock">Stock</Label>
+          <Input
+            type="number"
+            id="stock"
+            name="stock"
+            value={product.stock}
+            onChange={handleChange}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="category">Category</Label>
+          <Input
+            type="text"
+            id="category"
+            name="category"
+            value={product.category}
+            onChange={handleChange}
+            required
+          />
+        </FormGroup>
         <Button type="submit">Add Product</Button>
       </form>
     </FormContainer>
