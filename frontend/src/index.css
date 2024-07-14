@@ -8,9 +8,7 @@
   --background: rgba(137, 171, 245, 0.37);
 }
 
-html {
-  overflow: hidden;
-}
+
 
 *,
 *::before,
@@ -21,6 +19,8 @@ html {
 }
 
 body {
+  margin: 0;
+  
   background-color: var(--background);
   font-family: "Poppins", sans-serif;
 }
