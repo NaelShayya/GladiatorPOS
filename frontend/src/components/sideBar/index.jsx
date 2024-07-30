@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { NavLink } from "react-router-dom";
 
-//All the svg files
+// All the svg files
 import logo from "../../assets/logo.svg";
 import Home from "../../assets/home-solid.svg";
 import Team from "../../assets/social.svg";
@@ -8,8 +11,6 @@ import Calender from "../../assets/sceduled.svg";
 import Projects from "../../assets/starred.svg";
 import Documents from "../../assets/draft.svg";
 import PowerOff from "../../assets/power-off-solid.svg";
-import styled from "styled-components";
-import { NavLink } from "react-router-dom";
 
 const Container = styled.div`
   position: fixed;
@@ -203,6 +204,7 @@ const Logout = styled.button`
   width: 2rem;
   height: 2rem;
   background-color: transparent;
+  cursor: pointer;
 
   img {
     width: 100%;
@@ -210,9 +212,8 @@ const Logout = styled.button`
     filter: invert(15%) sepia(70%) saturate(6573%) hue-rotate(2deg)
       brightness(100%) contrast(126%);
     transition: all 0.3s ease;
+
     &:hover {
-      border: none;
-      padding: 0;
       opacity: 0.5;
     }
   }
@@ -220,14 +221,20 @@ const Logout = styled.button`
 
 const Sidebar = () => {
   const [click, setClick] = useState(false);
-  const handleClick = () => setClick(!click);
+  const [profileClick, setProfileClick] = useState(false);
+  const navigate = useNavigate();
 
-  const [profileClick, setprofileClick] = useState(false);
-  const handleProfileClick = () => setprofileClick(!profileClick);
+  const handleClick = () => setClick(!click);
+  const handleProfileClick = () => setProfileClick(!profileClick);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/auth");
+  };
 
   return (
     <Container>
-      <Button clicked={click} onClick={() => handleClick()}>
+      <Button clicked={click} onClick={handleClick}>
         Click
       </Button>
       <SidebarContainer>
@@ -235,44 +242,23 @@ const Sidebar = () => {
           <img src={logo} alt="logo" />
         </Logo>
         <SlickBar clicked={click}>
-          <Item
-            onClick={() => setClick(false)}
-            exact
-            activeClassName="active"
-            to="/cart"
-          >
+          <Item onClick={() => setClick(false)} exact to="/cart">
             <img src={Home} alt="Home" />
             <Text clicked={click}>Home</Text>
           </Item>
-          <Item
-            onClick={() => setClick(false)}
-            activeClassName="active"
-            to="/"
-          >
+          <Item onClick={() => setClick(false)} to="/">
             <img src={Team} alt="Team" />
             <Text clicked={click}>Team</Text>
           </Item>
-          <Item
-            onClick={() => setClick(false)}
-            activeClassName="active"
-            to="/addProd"
-          >
+          <Item onClick={() => setClick(false)} to="/addProd">
             <img src={Calender} alt="Calender" />
             <Text clicked={click}>Calender</Text>
           </Item>
-          <Item
-            onClick={() => setClick(false)}
-            activeClassName="active"
-            to="/table"
-          >
+          <Item onClick={() => setClick(false)} to="/table">
             <img src={Documents} alt="Documents" />
             <Text clicked={click}>Documents</Text>
           </Item>
-          <Item
-            onClick={() => setClick(false)}
-            activeClassName="active"
-            to="/projects"
-          >
+          <Item onClick={() => setClick(false)} to="/report">
             <img src={Projects} alt="Projects" />
             <Text clicked={click}>Projects</Text>
           </Item>
@@ -280,17 +266,17 @@ const Sidebar = () => {
 
         <Profile clicked={profileClick}>
           <img
-            onClick={() => handleProfileClick()}
+            onClick={handleProfileClick}
             src="https://picsum.photos/200"
             alt="Profile"
           />
           <Details clicked={profileClick}>
             <Name>
-              <h4>Jhon&nbsp;Doe</h4>
+              <h4>John&nbsp;Doe</h4>
               <a href="/#">view&nbsp;profile</a>
             </Name>
 
-            <Logout>
+            <Logout onClick={logout}>
               <img src={PowerOff} alt="logout" />
             </Logout>
           </Details>

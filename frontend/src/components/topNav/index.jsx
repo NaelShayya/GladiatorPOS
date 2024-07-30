@@ -11,6 +11,8 @@ const AppBar = styled.div`
   background-color: var(--black);
   color: var(--white);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: -32px;
+  
 `;
 
 const SearchContainer = styled.div`

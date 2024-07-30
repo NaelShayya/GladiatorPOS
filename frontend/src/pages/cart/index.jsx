@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import TopNavBar from '../../components/topNav';
 import ProductCard from '../../components/productCard';
-import Sidebar from '../../components/sideBar';
-import AddProductForm from '../../components/prodForm';
 import Cart from '../../components/cartComp'; // Import the Cart component
 import CheckoutModal from '../../components/checkout'; // Import the CheckoutModal component
+import { FaShoppingCart } from 'react-icons/fa'; // Import cart icon
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -20,27 +19,31 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const MainContainer = styled.div`
-  margin-left: 4rem; /* Adjust based on your sidebar width */
-  padding: 0.5rem; /* Adjusted padding for top and sides */
+  margin-left: 2rem; /* Adjust based on your sidebar width */
+  padding: 2rem; /* Adjusted padding for top and sides */
 `;
 
 const ProductGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem; /* Added margin to create space between TopNavBar and products */
+  gap: 1rem;
+  margin-top: 1rem; /* Added margin to create space between TopNavBar and products */
 `;
 
 const CartButton = styled.button`
   position: fixed;
-  top: 1rem;
+  bottom: 1rem;
   right: 1rem;
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 1rem 2rem; /* Increased padding for larger button */
   border: none;
-  border-radius: 4px;
+  border-radius: 35px; /* Increased border-radius for oval shape */
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem; /* Increased font size */
 
   &:hover {
     background-color: #0056b3;
@@ -65,11 +68,6 @@ const CartPage = () => {
   const handleSearchChange = (query) => {
     setSearchQuery(query);
     setFilteredProducts(products.filter(product => product.name.toLowerCase().includes(query.toLowerCase())));
-  };
-
-  const addProduct = (newProduct) => {
-    setProducts([...products, newProduct]);
-    setFilteredProducts([...products, newProduct]);
   };
 
   const handleAddToCart = (product) => {
@@ -117,10 +115,18 @@ const CartPage = () => {
         <TopNavBar searchQuery={searchQuery} setSearchQuery={handleSearchChange} />
         <ProductGrid>
           {filteredProducts.map(product => (
-            <ProductCard key={product.id} product={product} showAddToCart={true} onAddToCart={handleAddToCart} />
+            <ProductCard 
+              key={product.id} 
+              product={product} 
+              isCartView={false} 
+              showAddToCart={true} 
+              onAddToCart={handleAddToCart} 
+            />
           ))}
         </ProductGrid>
-        <CartButton onClick={toggleCart}>Cart</CartButton>
+        <CartButton onClick={toggleCart}>
+          <FaShoppingCart size={30} /> {/* Increased icon size */}
+        </CartButton>
         <Cart 
           isOpen={isCartOpen} 
           cartItems={cart} 

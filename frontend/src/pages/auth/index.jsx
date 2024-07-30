@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import SignInForm from "../../components/signin";
 import SignUpForm from "../../components/signup";
 
-const Container = styled.div`
-  font-family: sans-serif;
-  text-align: center;
-`;
-
-const GlobalStyle = styled.div`
+const GlobalStyle = createGlobalStyle`
   @import url("https://fonts.googleapis.com/css?family=Montserrat:400,800");
 
   * {
@@ -16,14 +11,14 @@ const GlobalStyle = styled.div`
   }
 
   body {
-    background: #f6f5f7;
+    background: #4b5320; /* Dark Olive Green */
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     font-family: "Montserrat", sans-serif;
     height: 100vh;
-    margin: -20px 0 50px;
+    margin: 0;
   }
 
   h1 {
@@ -56,8 +51,8 @@ const GlobalStyle = styled.div`
 
   button {
     border-radius: 20px;
-    border: 1px solid #ff4b2b;
-    background-color: #ff4b2b;
+    border: 1px solid #8b4513; /* Saddle Brown */
+    background-color: #8b4513; /* Saddle Brown */
     color: #ffffff;
     font-size: 12px;
     font-weight: bold;
@@ -92,7 +87,7 @@ const GlobalStyle = styled.div`
   }
 
   input {
-    background-color: #eee;
+    background-color: #dcdcdc; /* Gainsboro */
     border: none;
     padding: 12px 15px;
     margin: 8px 0;
@@ -100,7 +95,7 @@ const GlobalStyle = styled.div`
   }
 
   .container {
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
     position: relative;
@@ -108,6 +103,9 @@ const GlobalStyle = styled.div`
     width: 768px;
     max-width: 100%;
     min-height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .form-container {
@@ -171,9 +169,9 @@ const GlobalStyle = styled.div`
   }
 
   .overlay {
-    background: #ff416c;
-    background: -webkit-linear-gradient(to right, #ff4b2b, #ff416c);
-    background: linear-gradient(to right, #ff4b2b, #ff416c);
+    background: #3b5323; /* Olive Drab */
+    background: -webkit-linear-gradient(to right, #556b2f, #3b5323); /* Dark Olive Green and Olive Drab */
+    background: linear-gradient(to right, #556b2f, #3b5323); /* Dark Olive Green and Olive Drab */
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 0 0;
@@ -263,6 +261,15 @@ const GlobalStyle = styled.div`
   }
 `;
 
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+`;
+
 export default function AuthForm() {
   const [type, setType] = useState("signIn");
 
@@ -276,19 +283,15 @@ export default function AuthForm() {
   const containerClass = `container ${type === "signUp" ? "right-panel-active" : ""}`;
 
   return (
-    <GlobalStyle>
+    <>
+      <GlobalStyle />
       <Container>
-        <h2>Sign in/up Form</h2>
         <div className={containerClass} id="container">
           <SignUpForm />
           <SignInForm />
           <div className="overlay-container">
             <div className="overlay">
               <div className="overlay-panel overlay-left">
-                <h1>Welcome Back!</h1>
-                <p>
-                  To keep connected with us please login with your personal info
-                </p>
                 <button
                   className="ghost"
                   id="signIn"
@@ -298,8 +301,6 @@ export default function AuthForm() {
                 </button>
               </div>
               <div className="overlay-panel overlay-right">
-                <h1>Hello, Friend!</h1>
-                <p>Enter your personal details and start journey with us</p>
                 <button
                   className="ghost"
                   id="signUp"
@@ -312,6 +313,6 @@ export default function AuthForm() {
           </div>
         </div>
       </Container>
-    </GlobalStyle>
+    </>
   );
 }

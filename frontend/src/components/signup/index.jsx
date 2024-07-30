@@ -1,10 +1,13 @@
 import React from "react";
+import axios from "axios";
+
 function SignUpForm() {
   const [state, setState] = React.useState({
     name: "",
     email: "",
     password: ""
   });
+
   const handleChange = evt => {
     const value = evt.target.value;
     setState({
@@ -13,19 +16,31 @@ function SignUpForm() {
     });
   };
 
-  const handleOnSubmit = evt => {
+  const handleOnSubmit = async evt => {
     evt.preventDefault();
 
     const { name, email, password } = state;
-    alert(
-      `You are sign up with name: ${name} email: ${email} and password: ${password}`
-    );
 
-    for (const key in state) {
-      setState({
-        ...state,
-        [key]: ""
+    try {
+      const response = await axios.post("http://localhost:5000/user/users/register", {
+        name,
+        email,
+        password
       });
+
+      // Handle successful signup (e.g., redirect to login page, show success message)
+      alert(`Sign up successful!`);
+
+      // Clear form fields
+      setState({
+        name: "",
+        email: "",
+        password: ""
+      });
+
+    } catch (error) {
+      // Handle signup error (e.g., display error message)
+      alert(`Sign up failed: ${error.response.data.message}`);
     }
   };
 
@@ -33,18 +48,6 @@ function SignUpForm() {
     <div className="form-container sign-up-container">
       <form onSubmit={handleOnSubmit}>
         <h1>Create Account</h1>
-        <div className="social-container">
-          <a href="#" className="social">
-            <i className="fab fa-facebook-f" />
-          </a>
-          <a href="#" className="social">
-            <i className="fab fa-google-plus-g" />
-          </a>
-          <a href="#" className="social">
-            <i className="fab fa-linkedin-in" />
-          </a>
-        </div>
-        <span>or use your email for registration</span>
         <input
           type="text"
           name="name"
@@ -66,7 +69,7 @@ function SignUpForm() {
           onChange={handleChange}
           placeholder="Password"
         />
-        <button>Sign Up</button>
+        <button type="submit">Sign Up</button>
       </form>
     </div>
   );
