@@ -34,6 +34,10 @@ const TableCell = styled.td`
   border: 1px solid black; /* Added black border */
 `;
 
+const FilterContainer = styled.div`
+  margin-bottom: 1rem;
+`;
+
 const mockOrders = [
   {
     _id: '1',
@@ -70,14 +74,34 @@ const mockOrders = [
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
+  const [filterDate, setFilterDate] = useState('');
 
   useEffect(() => {
     // Instead of fetching from an API, use mock data
     setOrders(mockOrders);
   }, []);
 
+  const handleDateChange = (e) => {
+    setFilterDate(e.target.value);
+  };
+
+  const filteredOrders = orders.filter((order) => {
+    if (!filterDate) return true;
+    const orderDate = new Date(order.date).toISOString().split('T')[0];
+    return orderDate === filterDate;
+  });
+
   return (
     <TableContainer>
+      <FilterContainer>
+        <label htmlFor="dateFilter">Filter by date: </label>
+        <input
+          type="date"
+          id="dateFilter"
+          value={filterDate}
+          onChange={handleDateChange}
+        />
+      </FilterContainer>
       <Table>
         <thead>
           <tr>
@@ -88,7 +112,7 @@ const OrdersTable = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order) => (
+          {filteredOrders.map((order) => (
             <TableRow key={order._id}>
               <TableCell>{new Date(order.date).toLocaleString()}</TableCell>
               <TableCell>

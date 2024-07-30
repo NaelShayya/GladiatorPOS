@@ -18,7 +18,7 @@ const ProductGrid = styled.div`
 
 const initialProducts = [
   { id: 1, name: 'Product 1', description: 'This is product 1 description.', image: 'https://via.placeholder.com/150', quantity: 10, price: 100 },
-  { id: 2, name: 'Product 2', description: 'This is product 2 description.', image: 'https://via.placeholder.com/150', quantity: 5, price: 200 },
+  { id: 2, name: 'Product 2', description: 'This is product 2 description.', image: 'https://via.placeholder.com/150', quantity: 0, price: 200 },
   { id: 3, name: 'Product 3', description: 'This is product 3 description.', image: 'https://via.placeholder.com/150', quantity: 8, price: 150 },
   // Add more products as needed
 ];

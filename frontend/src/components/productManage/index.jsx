@@ -8,6 +8,7 @@ const Card = styled.div`
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  position: relative;
 
   &:hover {
     transform: translateY(-5px);
@@ -76,11 +77,32 @@ const IconContainer = styled.div`
   display: flex;
   justify-content: space-around;
   margin-top: 1rem;
+  position: relative;
+  z-index: 2;
+`;
+
+const OutOfStockOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  opacity: ${props => (props.show ? 1 : 0)};
+  transition: opacity 0.3s ease;
+  z-index: 1;
 `;
 
 const ProductCard2 = ({ product, onEdit, onDelete }) => {
   return (
     <Card>
+      <OutOfStockOverlay show={product.quantity === 0}>Out of Stock</OutOfStockOverlay>
       <CardImage src={product.image} alt={product.name} />
       <CardContent>
         <CardTitle>{product.name}</CardTitle>
