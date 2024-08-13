@@ -45,6 +45,12 @@ const CardPrice = styled.p`
   font-weight: bold;
 `;
 
+const CardCost = styled.p`
+  font-size: 1rem;
+  color: #555;
+  margin-top: 0.5rem;
+`;
+
 const QuantityDisplay = styled.div`
   margin-top: 1rem;
   font-size: 1.25rem;
@@ -107,7 +113,8 @@ const ProductCard2 = ({ product, onEdit, onDelete }) => {
       <CardContent>
         <CardTitle>{product.name}</CardTitle>
         <CardDescription>{product.description}</CardDescription>
-        <CardPrice>${product.price}</CardPrice>
+        <CardPrice>Price: ${product.price}</CardPrice>
+        <CardCost>Cost: ${product.cost}</CardCost> {/* Added Cost display */}
         <QuantityDisplay>
           <QuantityLabel>Quantity:</QuantityLabel>
           {product.quantity}

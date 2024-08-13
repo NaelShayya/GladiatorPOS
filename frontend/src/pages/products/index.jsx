@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TopNavBar from '../../components/topNav';
 import ProductCard2 from '../../components/productManage';
 import ViewForm from '../../components/viewForm'; // Import the new ViewForm component
+import axios from 'axios';
 
 const MainContainer = styled.div`
   margin-left: 2rem; /* Adjust based on your sidebar width */
@@ -16,28 +17,49 @@ const ProductGrid = styled.div`
   margin-top: 1rem; /* Added margin to create space between TopNavBar and products */
 `;
 
-const initialProducts = [
-  { id: 1, name: 'Product 1', description: 'This is product 1 description.', image: 'https://via.placeholder.com/150', quantity: 10, price: 100 },
-  { id: 2, name: 'Product 2', description: 'This is product 2 description.', image: 'https://via.placeholder.com/150', quantity: 0, price: 200 },
-  { id: 3, name: 'Product 3', description: 'This is product 3 description.', image: 'https://via.placeholder.com/150', quantity: 8, price: 150 },
-  // Add more products as needed
-];
-
 const MainContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [products, setProducts] = useState(initialProducts);
-  const [filteredProducts, setFilteredProducts] = useState(initialProducts);
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('https://gladiator-api-8x04.onrender.com/itemapi/items');
+        const fetchedProducts = response.data.map(item => ({
+          id: item._id,
+          name: item.name,
+          description: item.category,
+          image: item.image,
+          quantity: item.stock,
+          price: item.price,
+          cost: item.cost, // Added cost field
+        }));
+        setProducts(fetchedProducts);
+        setFilteredProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
     setFilteredProducts(products.filter(product => product.name.toLowerCase().includes(query.toLowerCase())));
   };
 
-  const handleDelete = (productToDelete) => {
-    const updatedProducts = products.filter(product => product.id !== productToDelete.id);
-    setProducts(updatedProducts);
-    setFilteredProducts(updatedProducts);
+  const handleDelete = async (productToDelete) => {
+    try {
+      await axios.delete(`https://gladiator-api-8x04.onrender.com/itemapi/items/${productToDelete.id}`);
+      const updatedProducts = products.filter(product => product.id !== productToDelete.id);
+      setProducts(updatedProducts);
+      setFilteredProducts(updatedProducts);
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
   };
 
   const handleModify = (productToModify) => {
@@ -48,13 +70,36 @@ const MainContent = () => {
     setSelectedProduct(null);
   };
 
-  const handleSaveProduct = (modifiedProduct) => {
-    const updatedProducts = products.map(product =>
-      product.id === modifiedProduct.id ? modifiedProduct : product
-    );
-    setProducts(updatedProducts);
-    setFilteredProducts(updatedProducts);
-    handleCloseForm();
+  const handleSaveProduct = async (modifiedProduct) => {
+    try {
+      const response = await axios.put(`https://gladiator-api-8x04.onrender.com/itemapi/items/${modifiedProduct.id}`, {
+        name: modifiedProduct.name,
+        category: modifiedProduct.description, // assuming category is used for description
+        image: modifiedProduct.image,
+        stock: modifiedProduct.quantity,
+        price: modifiedProduct.price,
+        cost: modifiedProduct.cost, // Added cost field
+      });
+
+      const updatedProduct = response.data;
+
+      const updatedProducts = products.map(product =>
+        product.id === updatedProduct._id ? {
+          id: updatedProduct._id,
+          name: updatedProduct.name,
+          description: updatedProduct.category,
+          image: updatedProduct.image,
+          quantity: updatedProduct.stock,
+          price: updatedProduct.price,
+          cost: updatedProduct.cost, // Added cost field
+        } : product
+      );
+      setProducts(updatedProducts);
+      setFilteredProducts(updatedProducts);
+      handleCloseForm();
+    } catch (error) {
+      console.error('Error saving product:', error);
+    }
   };
 
   return (

@@ -21,6 +21,10 @@ const ItemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: Object,
+    required: true
+},
 });
 
 module.exports = mongoose.model('Item', ItemSchema);

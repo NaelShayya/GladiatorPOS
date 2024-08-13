@@ -1,4 +1,34 @@
 const Item = require('../models/item');
+var admin = require('firebase-admin');
+
+// Load the service account JSON file
+var serviceAccount = require('../config/boo.json');
+
+// Initialize the app with the service account
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: 'gladiator-875f1.appspot.com'
+});
+const bucket = admin.storage().bucket();
+const uploadImage = async (file) => {
+  return new Promise((resolve, reject) => {
+    const blob = bucket.file(file.originalname);
+    const blobStream = blob.createWriteStream({
+      metadata: { contentType: file.mimetype },
+    });
+
+    blobStream.on('error', (error) => reject(error));
+    blobStream.on('finish', async () => {
+      // Make the file public
+      await blob.makePublic();
+
+      // Resolve with the public URL
+      resolve(`https://storage.googleapis.com/${bucket.name}/${blob.name}`);
+    });
+
+    blobStream.end(file.buffer);
+  });
+};
 
 exports.getItems = async (req, res) => {
   try {
@@ -10,9 +40,15 @@ exports.getItems = async (req, res) => {
 };
 
 exports.createItem = async (req, res) => {
-  const { name, price, stock, category } = req.body;
+  const { name, price,cost, stock, category } = req.body;
+  console.log("ya er", req.body)
   try {
-    const newItem = new Item({ name, price, stock, category });
+    let imageUrl = '';
+    if (req.file) {
+        imageUrl = await uploadImage(req.file);
+    }
+
+    const newItem = new Item({ name, price, cost, stock, category, image: imageUrl });
     await newItem.save();
     res.status(201).json(newItem);
   } catch (error) {

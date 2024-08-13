@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import TopNavBar from '../../components/topNav';
 import ProductCard from '../../components/productCard';
 import Cart from '../../components/cartComp'; // Import the Cart component
 import CheckoutModal from '../../components/checkout'; // Import the CheckoutModal component
 import { FaShoppingCart } from 'react-icons/fa'; // Import cart icon
+import axios from 'axios'; // Import axios for API calls
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -50,20 +51,35 @@ const CartButton = styled.button`
   }
 `;
 
-const initialProducts = [
-  { id: 1, name: 'Product 1', description: 'This is product 1 description.', image: 'https://via.placeholder.com/150', price: 10, quantity: 10 },
-  { id: 2, name: 'Product 2', description: 'This is product 2 description.', image: 'https://via.placeholder.com/150', price: 20, quantity: 5 },
-  { id: 3, name: 'Product 3', description: 'This is product 3 description.', image: 'https://via.placeholder.com/150', price: 15, quantity: 8 },
-  // Add more products as needed
-];
-
 const CartPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [products, setProducts] = useState(initialProducts);
-  const [filteredProducts, setFilteredProducts] = useState(initialProducts);
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('https://gladiator-api-8x04.onrender.com/itemapi/items');
+        const fetchedProducts = response.data.map(item => ({
+          id: item._id,
+          name: item.name,
+          description: item.category,
+          image: item.image,
+          price: item.price,
+          quantity: item.stock,
+        }));
+        setProducts(fetchedProducts);
+        setFilteredProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);

@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import Swal from 'sweetalert2';  // Import SweetAlert
 
 const FormContainer = styled.div`
   max-width: 500px;
   margin: 2rem auto;
   padding: 2rem;
   background-color: var(--light-gray);
-  border: 2px solid black; /* Added black border */
+  border: 2px solid black;
   border-radius: 10px;
   transition: all 0.3s ease-in-out;
   
@@ -37,7 +38,7 @@ const Input = styled.input`
   transition: border-color 0.3s ease-in-out;
   
   &:focus {
-    border-color: black; /* Changed to black border color on focus */
+    border-color: black;
     outline: none;
   }
 `;
@@ -45,7 +46,7 @@ const Input = styled.input`
 const Button = styled.button`
   width: 100%;
   padding: 0.75rem;
-  background-color: black; /* Changed to black background */
+  background-color: black;
   color: white;
   border: none;
   border-radius: 5px;
@@ -54,41 +55,72 @@ const Button = styled.button`
   transition: background-color 0.3s ease-in-out;
   
   &:hover {
-    background-color: var(--dark-gray); /* Changed to dark gray on hover */
+    background-color: var(--dark-gray);
   }
 `;
 
-const AddProductForm = ({ onProductAdded }) => {
+const AddProductForm = () => {
   const [product, setProduct] = useState({
     name: '',
     price: '',
     cost: '',
     stock: '',
     category: '',
+    image: null,
   });
 
+
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, files } = e.target;
     setProduct((prevProduct) => ({
       ...prevProduct,
-      [name]: value,
+      [name]: files ? files[0] : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('name', product.name);
+    formData.append('price', product.price);
+    formData.append('cost', product.cost);
+    formData.append('stock', product.stock);
+    formData.append('category', product.category);
+    if (product.image) {
+      formData.append('image', product.image);
+    }
+
     try {
-      const response = await axios.post('/api/products', product);
-      onProductAdded(response.data);
-      setProduct({
-        name: '',
-        price: '',
-        cost: '',
-        stock: '',
-        category: '',
+      const response = await axios.post('https://gladiator-api-8x04.onrender.com/itemapi/items', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
+
+
+      if (response && response.data) {
+        // Show success alert
+        Swal.fire({
+          icon: 'success',
+          title: 'Product Created',
+          text: 'Your product has been successfully created!',
+        });
+
+        // Reset the form state to clear the inputs
+        setProduct({
+          name: '',
+          price: '',
+          cost: '',
+          stock: '',
+          category: '',
+          image: null,
+        });
+      } else {
+        console.error('Unexpected response structure:', response);
+      }
     } catch (error) {
-      console.error('Error adding product:', error);
+      console.error('Error adding product:', error.message);
     }
   };
 
@@ -148,6 +180,15 @@ const AddProductForm = ({ onProductAdded }) => {
             value={product.category}
             onChange={handleChange}
             required
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="image">Image</Label>
+          <Input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleChange}
           />
         </FormGroup>
         <Button type="submit">Add Product</Button>
